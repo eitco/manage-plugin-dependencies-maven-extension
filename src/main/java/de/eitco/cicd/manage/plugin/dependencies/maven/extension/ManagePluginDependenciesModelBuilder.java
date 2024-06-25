@@ -18,7 +18,7 @@ import java.util.*;
 @Named
 @Singleton
 @Component(role = ModelBuilder.class)
-public class ManagePluginDependenciesModelBuilder implements ModelBuilder {
+public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
 
     final private Logger logger = LoggerFactory.getLogger(ManagePluginDependenciesModelBuilder.class);
 
