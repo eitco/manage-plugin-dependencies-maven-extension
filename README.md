@@ -3,7 +3,7 @@
 [![Build status](https://img.shields.io/github/actions/workflow/status/eitco/manage-plugin-dependencies-maven-extension/deploy.yaml?branch=main&style=for-the-badge&logo=github)](https://github.com/eitco/manage-plugin-dependencies-maven-extension/actions/workflows/deploy.yaml)
 [![Maven Central Version](https://img.shields.io/maven-central/v/de.eitco.cicd/manage-plugin-dependencies-maven-extension?style=for-the-badge&logo=apachemaven)](https://central.sonatype.com/artifact/de.eitco.cicd/manage-plugin-dependencies-maven-extension)
 
-# manage-plugin-dependencies-maven-extension
+# maven core extension to manage dependencies in the plugins section 
 
 This maven extension makes dependency management affect dependencies in the plugin section. There has been an
 [issue](https://issues.apache.org/jira/browse/MNG-2496) about this for a long time, that only recently 
