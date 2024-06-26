@@ -66,9 +66,11 @@ Assume a pom.xml with the following content:
 </project>
 ````
 Of course one wants to make sure that both plugins use the jdbc client in the same version (1). Which should be 
-the same as the jdbc client the application itself uses (2). In this example this is achieved using a property, but 
-what if one needs to share this version in a way where properties cannot be used. For example, 
-what if the jdbc drivers version is managed in the dependency management of an imported pom:
+the same as the jdbc client the application itself uses (2). 
+
+In this example this is achieved using a property, but what if one needs to share this version in a way where 
+properties cannot be used. For example, what if the jdbc drivers version is managed in the dependency management 
+of an imported pom:
 
 ````xml
 
