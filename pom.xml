@@ -70,6 +70,12 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <configuration>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

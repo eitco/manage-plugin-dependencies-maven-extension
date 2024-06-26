@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import org.apache.maven.model.*;
 import org.apache.maven.model.building.*;
 import org.apache.maven.model.resolution.UnresolvableModelException;
+import org.apache.maven.model.resolution.WorkspaceModelResolver;
 import org.apache.maven.project.ProjectDependenciesResolver;
 import org.codehaus.plexus.component.annotations.Component;
 import org.slf4j.Logger;
@@ -25,13 +26,6 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
     private ModelBuilder delegatedModelBuilder;
 
     private List<ModelBuilder> modelBuilders;
-
-    private ProjectDependenciesResolver projectDependenciesResolver;
-
-    @Inject
-    void setProjectDependenciesResolver(ProjectDependenciesResolver projectDependenciesResolver) {
-        this.projectDependenciesResolver = projectDependenciesResolver;
-    }
 
     @Inject
     void setDelegatedModelBuilder(List<ModelBuilder> modelBuilders) {
@@ -71,8 +65,11 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
     public Result<? extends Model> buildRawModel(File pomFile, int validationLevel, boolean locationTracking) {
 
         try {
+
             return adapt(getDelegatedModelBuilder().buildRawModel(pomFile, validationLevel, locationTracking));
+
         } catch (ModelBuildingException e) {
+
             throw new RuntimeException(e);
         }
     }
@@ -82,13 +79,7 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
 
         Model effectiveModel = build.getEffectiveModel();
 
-        try {
-
-            adapt(effectiveModel, request);
-
-        } catch (UnresolvableModelException e) {
-            throw new RuntimeException(e);
-        }
+        adapt(effectiveModel, request);
 
         return build;
 
@@ -96,22 +87,30 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
 
     public <ModelType extends Model> Result<ModelType> adapt(Result<ModelType> result) throws ModelBuildingException {
 
-        try {
-            adapt(result.get(), null);
+        if (!result.hasErrors()) {
 
-        } catch (UnresolvableModelException e) {
-            throw new RuntimeException(e);
+            adapt(result.get(), null);
         }
 
         return result;
     }
 
-    public void adapt(Model model, ModelBuildingRequest request) throws UnresolvableModelException, ModelBuildingException {
-
+    public void adapt(Model model, ModelBuildingRequest request) throws ModelBuildingException {
 
         if (model == null) {
 
             return;
+        }
+
+        logger.debug("requested model: {}:{}:{}", model.getGroupId(), model.getArtifactId(), model.getVersion());
+
+        if (request != null) {
+
+            if (request.getModelCache().get(model.getGroupId(), model.getArtifactId(), model.getVersion(), "manage") == null) {
+
+                logger.debug("adding model to cache: {}:{}:{}", model.getGroupId(), model.getArtifactId(), model.getVersion());
+                request.getModelCache().put(model.getGroupId(), model.getArtifactId(), model.getVersion(), "manage", model);
+            }
         }
 
         if (model.getBuild() == null) {
@@ -139,7 +138,7 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
         }
     }
 
-    private void adaptPlugin(Plugin plugin, Map<String, String> dependencyVersions, Model model, ModelBuildingRequest request) throws UnresolvableModelException, ModelBuildingException {
+    private void adaptPlugin(Plugin plugin, Map<String, String> dependencyVersions, Model model, ModelBuildingRequest request) throws ModelBuildingException {
 
         List<Dependency> pluginDependencies = plugin.getDependencies();
 
@@ -172,7 +171,7 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
         }
     }
 
-    private String manageDependencyVersion(Model model, Dependency dependency, ModelBuildingRequest request) throws UnresolvableModelException, ModelBuildingException {
+    private String manageDependencyVersion(Model model, Dependency dependency, ModelBuildingRequest request) throws ModelBuildingException {
 
 
         DependencyManagement dependencyManagement = model.getDependencyManagement();
@@ -189,7 +188,7 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
         return "";
     }
 
-    private String manageDependencyVersion(DependencyManagement dependencyManagement, Dependency dependency, ModelBuildingRequest request) throws UnresolvableModelException, ModelBuildingException {
+    private String manageDependencyVersion(DependencyManagement dependencyManagement, Dependency dependency, ModelBuildingRequest request) throws ModelBuildingException {
 
         if (dependencyManagement == null) {
 
@@ -210,21 +209,14 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
                 return managedDependency.getVersion();
             }
 
-            if (
+            if (request != null &&
                     Objects.equals(managedDependency.getScope(), "import") &&
-                            Objects.equals(managedDependency.getType(), "pom")
+                    Objects.equals(managedDependency.getType(), "pom")
             ) {
 
                 logger.debug("checking dependency management import {}:{}:{}", managedDependency.getGroupId(), managedDependency.getArtifactId(), managedDependency.getVersion());
 
-                ModelSource dependencyImport = request.getModelResolver().resolveModel(managedDependency);
-
-                ModelBuildingRequest importRequest = new DefaultModelBuildingRequest(request);
-                importRequest.setModelSource(dependencyImport);
-
-                ModelBuildingResult imported = getDelegatedModelBuilder().build(importRequest);
-
-                DependencyManagement importedDependencyManagement = imported.getEffectiveModel().getDependencyManagement();
+                DependencyManagement importedDependencyManagement = getDependencyManagement(request, managedDependency);
 
                 String version = manageDependencyVersion(importedDependencyManagement, dependency, request);
 
@@ -236,5 +228,35 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
         }
 
         return null;
+    }
+
+    private DependencyManagement getDependencyManagement(ModelBuildingRequest request, Dependency managedDependency) throws ModelBuildingException {
+
+        logger.debug("checking 'manage' cache for: {}:{}:{}", managedDependency.getGroupId(), managedDependency.getArtifactId(), managedDependency.getVersion());
+        Object cached = request.getModelCache().get(managedDependency.getGroupId(), managedDependency.getArtifactId(), managedDependency.getVersion(), "manage");
+
+        if (cached instanceof Model model) {
+
+            return model.getDependencyManagement();
+        }
+
+        try {
+
+            logger.debug("checking remove repo for: {}:{}:{}", managedDependency.getGroupId(), managedDependency.getArtifactId(), managedDependency.getVersion());
+
+            var dependencyImport = request.getModelResolver().resolveModel(managedDependency);
+
+            ModelBuildingRequest importRequest = new DefaultModelBuildingRequest(request);
+
+            importRequest.setModelSource(dependencyImport);
+
+            ModelBuildingResult imported = getDelegatedModelBuilder().build(importRequest);
+
+            return imported.getEffectiveModel().getDependencyManagement();
+
+        } catch (UnresolvableModelException ex) {
+
+            throw new RuntimeException(ex);
+        }
     }
 }

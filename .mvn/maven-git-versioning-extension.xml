@@ -7,245 +7,84 @@
             <pattern><![CDATA[(?<tag>[0-9]+\.[0-9]+\.[0-9]+)]]></pattern>
             <version>${ref.tag}</version>
             <properties>
-                <property>
-                    <name>version.semantic.release</name>
-                    <value>${ref.tag}</value>
-                </property>
-                <property>
-                    <name>version.semantic</name>
-                    <value>${ref.tag}</value>
-                </property>
-                <property>
-                    <name>original.version</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>version.numeric</name>
-                    <value>${ref.tag}</value>
-                </property>
-                <property>
-                    <name>version.symbolic</name>
-                    <value>redeploy-${ref.tag}</value>
-                </property>
-                <property>
-                    <name>scm.branch</name>
-                    <value>${ref}</value>
-                </property>
-                <property>
-                    <name>npm.project.version</name>
-                    <value>${ref.tag}</value>
-                </property>
+                <version.original>${version}</version.original>
+                <version.numeric>${ref.tag}</version.numeric>
+                <version.symbolic>${property.lts.name:-latest}</version.symbolic>
+                <version.semantic>${ref.tag}</version.semantic>
+                <scm.branch>${ref.slug}</scm.branch>
+                <version.unique>${ref.tag}</version.unique>
             </properties>
         </ref>
         <ref type="branch">
-            <pattern><![CDATA[(?<branch>(lts-.*)-development)]]></pattern>
-            <version>${ref.branch}-SNAPSHOT</version>
-            <properties>
-                <property>
-                    <name>version.semantic.release</name>
-                    <value>${version.release}-${ref.branch}</value>
-                </property>
-                <property>
-                    <name>version.semantic</name>
-                    <value>${version.release}-${ref.branch}-SNAPSHOT</value>
-                </property>
-                <property>
-                    <name>original.version</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>version.numeric</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.symbolic</name>
-                    <value>${ref.branch}</value>
-                </property>
-                <property>
-                    <name>scm.branch</name>
-                    <value>${ref.branch}</value>
-                </property>
-            </properties>
-        </ref>
-        <ref type="branch">
-            <pattern>main|lts-(.*)</pattern>
+            <pattern>main</pattern>
             <version>${version}</version>
             <properties>
-                <property>
-                    <name>version.semantic.release</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.semantic</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>original.version</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>version.numeric</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.symbolic</name>
-                    <value>latest</value>
-                </property>
-                <property>
-                    <name>scm.branch</name>
-                    <value>${branch}</value>
-                </property>
+                <version.original>${version}</version.original>
+                <version.numeric>${version.release}</version.numeric>
+                <version.symbolic>main-SNAPSHOT</version.symbolic>
+                <version.semantic>${version}</version.semantic>
+                <scm.branch>${ref.slug}</scm.branch>
+                <version.unique>${version}-build.${build.number}</version.unique>
             </properties>
         </ref>
         <ref type="branch">
             <pattern><![CDATA[((feature|bugfix)/)?(?<feature>[a-zA-Z][a-zA-Z][a-zA-Z]*-[0-9]+).*]]></pattern>
             <version>${ref.feature}-SNAPSHOT</version>
             <properties>
-                <property>
-                    <name>version.semantic.release</name>
-                    <value>${version.release}-${ref.feature}</value>
-                </property>
-                <property>
-                    <name>version.semantic</name>
-                    <value>${version.release}-${ref.feature}-SNAPSHOT</value>
-                </property>
-                <property>
-                    <name>original.version</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>version.numeric</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.symbolic</name>
-                    <value>${ref.feature}</value>
-                </property>
-                <property>
-                    <name>scm.branch</name>
-                    <value>${ref}</value>
-                </property>
+                <version.original>${version}</version.original>
+                <version.numeric>${version.release}</version.numeric>
+                <version.symbolic>${ref.feature}-SNAPSHOT</version.symbolic>
+                <version.semantic>${version.release}-${ref.feature}-SNAPSHOT</version.semantic>
+                <scm.branch>${ref.slug}</scm.branch>
+                <version.unique>${version.release}-${ref.feature}-build.${build.number}</version.unique>
             </properties>
         </ref>
         <ref type="branch">
             <pattern><![CDATA[(feature|bugfix)/(?<feature>.+)]]></pattern>
             <version>${ref.feature}-SNAPSHOT</version>
             <properties>
-                <property>
-                    <name>version.semantic.release</name>
-                    <value>${version.release}-${ref.feature}</value>
-                </property>
-                <property>
-                    <name>version.semantic</name>
-                    <value>${version.release}-${ref.feature}-SNAPSHOT</value>
-                </property>
-                <property>
-                    <name>original.version</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>version.numeric</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.symbolic</name>
-                    <value>${ref.feature}</value>
-                </property>
-                <property>
-                    <name>scm.branch</name>
-                    <value>${ref}</value>
-                </property>
+                <version.original>${version}</version.original>
+                <version.numeric>${version.release}</version.numeric>
+                <version.symbolic>${ref.feature}-SNAPSHOT</version.symbolic>
+                <version.semantic>${version.release}-${ref.feature}-SNAPSHOT</version.semantic>
+                <scm.branch>${ref.slug}</scm.branch>
+                <version.unique>${version.release}-${ref.feature}-build.${build.number}</version.unique>
             </properties>
         </ref>
         <ref type="branch">
             <pattern><![CDATA[(?<branch>.+)]]></pattern>
             <version>${ref.branch}-SNAPSHOT</version>
             <properties>
-                <property>
-                    <name>version.semantic.release</name>
-                    <value>${version.release}-${ref.branch}</value>
-                </property>
-                <property>
-                    <name>version.semantic</name>
-                    <value>${version.release}-${ref.branch}-SNAPSHOT</value>
-                </property>
-                <property>
-                    <name>original.version</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>version.numeric</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.symbolic</name>
-                    <value>${ref.branch}</value>
-                </property>
-                <property>
-                    <name>scm.branch</name>
-                    <value>${ref.branch}</value>
-                </property>
+                <version.original>${version}</version.original>
+                <version.numeric>${version.release}</version.numeric>
+                <version.symbolic>${ref.branch}-SNAPSHOT</version.symbolic>
+                <version.semantic>${version.release}-${ref.branch}-SNAPSHOT</version.semantic>
+                <scm.branch>${ref.slug}</scm.branch>
+                <version.unique>${version.release}-${ref.branch}-build.${build.number}</version.unique>
             </properties>
         </ref>
         <ref type="tag">
             <pattern><![CDATA[(?<tag>.+)]]></pattern>
             <version>${ref.tag}</version>
             <properties>
-                <property>
-                    <name>version.semantic.release</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.semantic</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>original.version</name>
-                    <value>${version}</value>
-                </property>
-                <property>
-                    <name>version.numeric</name>
-                    <value>${version.release}</value>
-                </property>
-                <property>
-                    <name>version.symbolic</name>
-                    <value>${ref.tag}</value>
-                </property>
-                <property>
-                    <name>scm.branch</name>
-                    <value>${ref}</value>
-                </property>
+                <version.original>${version}</version.original>
+                <version.numeric>${version.release}</version.numeric>
+                <version.symbolic>${ref.tag}-SNAPSHOT</version.symbolic>
+                <version.semantic>${version.release}-${ref.tag}-SNAPSHOT</version.semantic>
+                <scm.branch>${ref.slug}</scm.branch>
+                <version.unique>${version.release}-${ref.tag}-build.${build.number}</version.unique>
             </properties>
         </ref>
     </refs>
     <rev>
         <version>${version.release}-${commit}-SNAPSHOT</version>
         <properties>
-            <property>
-                <pattern>version.semantic.release</pattern>
-                <value>${version.release}-${commit}</value>
-            </property>
-            <property>
-                <name>version.semantic</name>
-                <value>${version.release}-${commit}-SNAPSHOT</value>
-            </property>
-            <property>
-                <name>original.version</name>
-                <value>${version}</value>
-            </property>
-            <property>
-                <name>version.numeric</name>
-                <value>${version.release}</value>
-            </property>
-            <property>
-                <name>version.symbolic</name>
-                <value>${commit}</value>
-            </property>
-            <property>
-                <name>scm.branch</name>
-                <value>unknown</value>
-            </property>
+            <version.original>${version}</version.original>
+            <version.numeric>${version.release}</version.numeric>
+            <version.symbolic>${commit}-SNAPSHOT</version.symbolic>
+            <version.semantic>${version.release}-${commit}-SNAPSHOT</version.semantic>
+            <scm.branch>${commit}</scm.branch>
+            <version.unique>${version.release}-${commit}-build.${build.number}</version.unique>
         </properties>
     </rev>
-
 </configuration>
