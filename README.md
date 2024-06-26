@@ -158,4 +158,4 @@ To activate the extension simply add a file `.mvn/extensions.xml` to the root of
 Adding this file will enable maven to read (and execute) the example above - using the postgres clients version that 
 is managed in the imported pom. 
 
-> 📘 Some example projects can be found in the [integration tests](src/it)
+> 📘 The [integration tests](src/it) provide some example usages
