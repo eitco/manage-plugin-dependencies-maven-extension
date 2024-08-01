@@ -159,3 +159,6 @@ Adding this file will enable maven to read (and execute) the example above - usi
 is managed in the imported pom. 
 
 > 📘 The [integration tests](src/it) provide some example usages
+
+> ⚠️ Note that, when importing a bill-of-materials `pom.xml` from the same build reactor, you need to make 
+> sure that the imported `bill-of-materials` is ordered before the importing `pom.xml` in the build reactor.
