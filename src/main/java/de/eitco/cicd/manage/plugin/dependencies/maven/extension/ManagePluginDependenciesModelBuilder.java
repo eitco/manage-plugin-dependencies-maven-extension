@@ -106,10 +106,12 @@ public class ManagePluginDependenciesModelBuilder extends DefaultModelBuilder {
 
         if (request != null) {
 
-            if (request.getModelCache().get(model.getGroupId(), model.getArtifactId(), model.getVersion(), "manage") == null) {
+            ModelCache modelCache = request.getModelCache();
+
+            if (modelCache != null && modelCache.get(model.getGroupId(), model.getArtifactId(), model.getVersion(), "manage") == null) {
 
                 logger.debug("adding model to cache: {}:{}:{}", model.getGroupId(), model.getArtifactId(), model.getVersion());
-                request.getModelCache().put(model.getGroupId(), model.getArtifactId(), model.getVersion(), "manage", model);
+                modelCache.put(model.getGroupId(), model.getArtifactId(), model.getVersion(), "manage", model);
             }
         }
 
