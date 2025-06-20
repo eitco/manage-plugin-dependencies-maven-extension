@@ -22,9 +22,15 @@ def jooqMavenPluginDependency = project.':build'.':plugins'.':plugin'.find { plu
     plugin.':artifactId'.text() == 'jooq-codegen-maven'
 }.':dependencies'.':dependency'
 
+def cargoMavenPluginDependency = project.':build'.':plugins'.':plugin'.find { plugin ->
+
+    plugin.':artifactId'.text() == 'cargo-maven3-plugin'
+}.':dependencies'.':dependency'
+
 assert liquibasePluginDependency.':artifactId'.text() == 'postgresql'
 assert liquibasePluginDependency.':version'.text() == '42.6.2'
 assert jooqMavenPluginDependency.':artifactId'.text() == 'postgresql'
 assert jooqMavenPluginDependency.':version'.text() == '42.6.2'
-
+assert cargoMavenPluginDependency.':artifactId'.text() == 'mysql-connector-j'
+assert cargoMavenPluginDependency.':version'.text() == '9.3.0'
 
